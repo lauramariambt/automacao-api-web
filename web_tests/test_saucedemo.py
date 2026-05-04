@@ -50,11 +50,14 @@ def test_fluxo_compra():
 
         wait.until(EC.url_contains("checkout-step-one"))
 
-        # preenche dados via JavaScript
+        # preenche dados
         wait.until(EC.presence_of_element_located((By.ID, "first-name")))
-        driver.execute_script("document.getElementById('first-name').value = 'Laura'")
-        driver.execute_script("document.getElementById('last-name').value = 'Teste'")
-        driver.execute_script("document.getElementById('postal-code').value = '12345'")
+
+        for field_id, value in [("first-name", "Laura"), ("last-name", "Teste"), ("postal-code", "12345")]:
+            field = driver.find_element(By.ID, field_id)
+            driver.execute_script("arguments[0].focus();", field)
+            driver.execute_script("arguments[0].value = '';", field)
+            field.send_keys(value)
 
         # continua fluxo
         continue_btn = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
