@@ -54,23 +54,18 @@ def test_fluxo_compra():
         wait.until(EC.presence_of_element_located((By.ID, "first-name")))
 
         for field_id, value in [("first-name", "Laura"), ("last-name", "Teste"), ("postal-code", "12345")]:
-          driver.execute_script("""
-        var field = document.getElementById(arguments[0]);
-        var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-        nativeInputValueSetter.call(field, arguments[1]);
-        field.dispatchEvent(new Event('input', { bubbles: true }));
-        field.dispatchEvent(new Event('change', { bubbles: true }));
+            driver.execute_script("""
+                var field = document.getElementById(arguments[0]);
+                var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                nativeInputValueSetter.call(field, arguments[1]);
+                field.dispatchEvent(new Event('input', { bubbles: true }));
+                field.dispatchEvent(new Event('change', { bubbles: true }));
             """, field_id, value)
 
         # continua fluxo
         continue_btn = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
         driver.execute_script("arguments[0].scrollIntoView(true);", continue_btn)
         driver.execute_script("arguments[0].click();", continue_btn)
-
-        import time
-        time.sleep(3)
-        print("URL após continue:", driver.current_url)
-        print("Título da página:", driver.title)
 
         wait.until(EC.url_contains("checkout-step-two"))
 
