@@ -68,6 +68,11 @@ def test_fluxo_compra():
         driver.execute_script("arguments[0].scrollIntoView(true);", continue_btn)
         driver.execute_script("arguments[0].click();", continue_btn)
 
+        import time
+        time.sleep(3)
+        print("URL após continue:", driver.current_url)
+        print("Título da página:", driver.title)
+
         wait.until(EC.url_contains("checkout-step-two"))
 
         # finaliza compra
