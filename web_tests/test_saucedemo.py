@@ -52,16 +52,21 @@ def test_fluxo_compra():
 
         # preenche dados
         first_name = wait.until(EC.element_to_be_clickable((By.ID, "first-name")))
-        first_name.clear()
+        first_name.click()
         first_name.send_keys("Laura")
 
-        last_name = wait.until(EC.element_to_be_clickable((By.ID, "last-name")))
-        last_name.clear()
+        last_name = driver.find_element(By.ID, "last-name")
+        last_name.click()
         last_name.send_keys("Teste")
 
-        postal_code = wait.until(EC.element_to_be_clickable((By.ID, "postal-code")))
-        postal_code.clear()
+        postal_code = driver.find_element(By.ID, "postal-code")
+        postal_code.click()
         postal_code.send_keys("12345")
+
+        # verifica se campos foram preenchidos
+        assert first_name.get_attribute("value") == "Laura"
+        assert last_name.get_attribute("value") == "Teste"
+        assert postal_code.get_attribute("value") == "12345"
 
         # continua fluxo
         continue_btn = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
