@@ -50,14 +50,17 @@ def test_fluxo_compra():
 
         wait.until(EC.url_contains("checkout-step-one"))
 
-        # preenche dados
+        # preenche dados disparando eventos React
         wait.until(EC.presence_of_element_located((By.ID, "first-name")))
 
         for field_id, value in [("first-name", "Laura"), ("last-name", "Teste"), ("postal-code", "12345")]:
-            field = driver.find_element(By.ID, field_id)
-            driver.execute_script("arguments[0].focus();", field)
-            driver.execute_script("arguments[0].value = '';", field)
-            field.send_keys(value)
+          driver.execute_script("""
+        var field = document.getElementById(arguments[0]);
+        var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        nativeInputValueSetter.call(field, arguments[1]);
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+            """, field_id, value)
 
         # continua fluxo
         continue_btn = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
