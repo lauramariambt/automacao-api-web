@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-from web_tests.config import BASE_URL
+from web_tests.config import BASE_URL, SAUCE_USERNAME, SAUCE_PASSWORD
 from web_tests.pages.login_page import LoginPage
 from web_tests.pages.inventory_page import InventoryPage
 from web_tests.pages.checkout_page import CheckoutPage
@@ -22,7 +22,7 @@ def test_fluxo_compra():
     try:
         driver.get(BASE_URL)
 
-        LoginPage(driver).login("standard_user", "secret_sauce")
+        LoginPage(driver).login(SAUCE_USERNAME, SAUCE_PASSWORD)
 
         inventory = InventoryPage(driver)
         inventory.adicionar_produto_ao_carrinho()

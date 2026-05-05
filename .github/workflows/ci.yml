@@ -28,3 +28,6 @@ jobs:
 
       - name: Rodar testes Web
         run: pytest web_tests/
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
