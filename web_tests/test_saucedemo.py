@@ -1,12 +1,13 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from web_tests.config import BASE_URL
+from web_tests.pages.login_page import LoginPage
+from web_tests.pages.inventory_page import InventoryPage
+from web_tests.pages.checkout_page import CheckoutPage
 
 
 def test_fluxo_compra():
@@ -17,64 +18,26 @@ def test_fluxo_compra():
     options.add_argument("--window-size=1920,1080")
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    wait = WebDriverWait(driver, 20)
 
     try:
         driver.get(BASE_URL)
 
-        # login
-        driver.find_element(By.ID, "user-name").send_keys("standard_user")
-        driver.find_element(By.ID, "password").send_keys("secret_sauce")
-        driver.find_element(By.ID, "password").send_keys(Keys.RETURN)
+        LoginPage(driver).login("standard_user", "secret_sauce")
 
-        wait.until(EC.url_contains("inventory"))
-        assert "inventory" in driver.current_url
+        inventory = InventoryPage(driver)
+        inventory.adicionar_produto_ao_carrinho()
+        inventory.ir_para_carrinho()
 
-        # adiciona produto ao carrinho
-        add_btn = wait.until(EC.element_to_be_clickable((By.ID, "add-to-cart-sauce-labs-backpack")))
-        driver.execute_script("arguments[0].click();", add_btn)
-
-        # acessa carrinho
-        cart_btn = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "shopping_cart_link")))
-        driver.execute_script("arguments[0].scrollIntoView(true);", cart_btn)
-        driver.execute_script("arguments[0].click();", cart_btn)
-
-        wait.until(EC.url_contains("cart"))
-        item = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "inventory_item_name")))
+        wait = WebDriverWait(driver, 20)
+        item = wait.until(EC.presence_of_element_located(("class name", "inventory_item_name")))
         assert item is not None
 
-        # checkout
-        checkout_btn = wait.until(EC.element_to_be_clickable((By.ID, "checkout")))
-        driver.execute_script("arguments[0].scrollIntoView(true);", checkout_btn)
-        driver.execute_script("arguments[0].click();", checkout_btn)
+        checkout = CheckoutPage(driver)
+        checkout.ir_para_checkout()
+        checkout.preencher_dados("Laura", "Teste", "12345")
+        checkout.continuar()
+        checkout.finalizar()
 
-        wait.until(EC.url_contains("checkout-step-one"))
-
-        # preenche dados disparando eventos React
-        wait.until(EC.presence_of_element_located((By.ID, "first-name")))
-
-        for field_id, value in [("first-name", "Laura"), ("last-name", "Teste"), ("postal-code", "12345")]:
-            driver.execute_script("""
-                var field = document.getElementById(arguments[0]);
-                var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-                nativeInputValueSetter.call(field, arguments[1]);
-                field.dispatchEvent(new Event('input', { bubbles: true }));
-                field.dispatchEvent(new Event('change', { bubbles: true }));
-            """, field_id, value)
-
-        # continua fluxo
-        continue_btn = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
-        driver.execute_script("arguments[0].scrollIntoView(true);", continue_btn)
-        driver.execute_script("arguments[0].click();", continue_btn)
-
-        wait.until(EC.url_contains("checkout-step-two"))
-
-        # finaliza compra
-        finish_btn = wait.until(EC.element_to_be_clickable((By.ID, "finish")))
-        driver.execute_script("arguments[0].scrollIntoView(true);", finish_btn)
-        driver.execute_script("arguments[0].click();", finish_btn)
-
-        wait.until(EC.url_contains("checkout-complete"))
         assert "checkout-complete" in driver.current_url
 
     finally:
