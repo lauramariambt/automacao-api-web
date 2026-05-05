@@ -12,6 +12,7 @@ Projeto de automação de testes cobrindo API REST e interface web, com pipeline
 
 ## Estrutura do Projeto
 
+```
 automacao-api-web/
 ├── api_tests/
 │   ├── config.py
@@ -26,7 +27,7 @@ automacao-api-web/
 └── .github/
 └── workflows/
 └── ci.yml
-
+```
 ## Como Executar
 
 ### 1. Clone o repositório
