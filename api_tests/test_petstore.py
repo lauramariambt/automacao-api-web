@@ -5,12 +5,12 @@ from api_tests.config import BASE_URL
 def test_criar_pet():
     payload = {
         "id": 123456,
-        "name": "Bolinha",
+        "name": "Tom",
         "status": "available"
     }
     response = requests.post(f"{BASE_URL}/pet", json=payload)
     assert response.status_code == 200
-    assert response.json()["name"] == "Bolinha"
+    assert response.json()["name"] == "Tom"
 
 
 def test_buscar_pet():
@@ -23,12 +23,12 @@ def test_buscar_pet():
 def test_atualizar_pet():
     payload = {
         "id": 123456,
-        "name": "Bolinha Atualizada",
+        "name": "Tom Atualizado",
         "status": "sold"
     }
     response = requests.put(f"{BASE_URL}/pet", json=payload)
     assert response.status_code == 200
-    assert response.json()["name"] == "Bolinha Atualizada"
+    assert response.json()["name"] == "Tom Atualizado"
 
 
 def test_deletar_pet():
