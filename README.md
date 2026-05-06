@@ -98,5 +98,4 @@ O pipeline executa automaticamente a cada push, rodando todos os testes de API e
 ![pytest web](docs/pytest-web.png)
 
 ### GitHub Actions
-![actions](docs/actions-summary.png)
-![actions steps](docs/actions-steps.png)
+![actions](docs/actions.png)
